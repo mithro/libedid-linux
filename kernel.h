@@ -1,19 +1,19 @@
 #ifndef _LINUX_KERNEL_H
 #define _LINUX_KERNEL_H
 
-
 #include <stdarg.h>
-#include <linux/linkage.h>
-#include <linux/stddef.h>
-#include <linux/types.h>
-#include <linux/compiler.h>
-#include <linux/bitops.h>
-#include <linux/log2.h>
-#include <linux/typecheck.h>
-#include <linux/printk.h>
-#include <linux/dynamic_debug.h>
-#include <asm/byteorder.h>
-#include <uapi/linux/kernel.h>
+#include <stddef.h>
+#include <stdlib.h>
+
+#include "types.h"
+#include "compiler.h"
+//#include <linux/bitops.h>
+//#include <linux/log2.h>
+//#include <linux/typecheck.h>
+//#include <linux/printk.h>
+//#include <linux/dynamic_debug.h>
+//#include <asm/byteorder.h>
+//#include <uapi/linux/kernel.h>
 
 #define USHRT_MAX	((u16)(~0U))
 #define SHRT_MAX	((s16)(USHRT_MAX>>1))
@@ -24,10 +24,10 @@
 #define LONG_MAX	((long)(~0UL>>1))
 #define LONG_MIN	(-LONG_MAX - 1)
 #define ULONG_MAX	(~0UL)
-#define LLONG_MAX	((long long)(~0ULL>>1))
+#define LLONG_MAX	((s64)(~0ULL>>1))
 #define LLONG_MIN	(-LLONG_MAX - 1)
 #define ULLONG_MAX	(~0ULL)
-#define SIZE_MAX	(~(size_t)0)
+//#define SIZE_MAX	(~(size_t)0)
 
 #define U8_MAX		((u8)~0U)
 #define S8_MAX		((s8)(U8_MAX>>1))
@@ -66,7 +66,7 @@
 #define FIELD_SIZEOF(t, f) (sizeof(((t*)0)->f))
 #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
 #define DIV_ROUND_UP_ULL(ll,d) \
-	({ unsigned long long _tmp = (ll)+(d)-1; do_div(_tmp, d); _tmp; })
+	({ u64 _tmp = (ll)+(d)-1; do_div(_tmp, d); _tmp; })
 
 #if BITS_PER_LONG == 32
 # define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
@@ -110,7 +110,7 @@
 #define DIV_ROUND_CLOSEST_ULL(x, divisor)(		\
 {							\
 	typeof(divisor) __d = divisor;			\
-	unsigned long long _tmp = (x) + (__d) / 2;	\
+	u64 _tmp = (x) + (__d) / 2;	\
 	do_div(_tmp, __d);				\
 	_tmp;						\
 }							\
@@ -265,11 +265,11 @@ void complete_and_exit(struct completion *, long)
 	__noreturn;
 
 /* Internal, do not use. */
-int __must_check _kstrtoul(const char *s, unsigned int base, unsigned long *res);
-int __must_check _kstrtol(const char *s, unsigned int base, long *res);
+int __must_check _kstrtoul(const char *s, unsigned int base, u64 *res);
+int __must_check _kstrtol(const char *s, unsigned int base, s64 *res);
 
-int __must_check kstrtoull(const char *s, unsigned int base, unsigned long long *res);
-int __must_check kstrtoll(const char *s, unsigned int base, long long *res);
+int __must_check kstrtoull(const char *s, unsigned int base, u64 *res);
+int __must_check kstrtoll(const char *s, unsigned int base, s64 *res);
 
 /**
  * kstrtoul - convert a string to an unsigned long
@@ -287,15 +287,15 @@ int __must_check kstrtoll(const char *s, unsigned int base, long long *res);
  * Used as a replacement for the obsolete simple_strtoull. Return code must
  * be checked.
 */
-static inline int __must_check kstrtoul(const char *s, unsigned int base, unsigned long *res)
+static inline int __must_check kstrtoul(const char *s, unsigned int base, u64 *res)
 {
 	/*
 	 * We want to shortcut function call, but
-	 * __builtin_types_compatible_p(unsigned long, unsigned long long) = 0.
+	 * __builtin_types_compatible_p(unsigned long, u64) = 0.
 	 */
-	if (sizeof(unsigned long) == sizeof(unsigned long long) &&
-	    __alignof__(unsigned long) == __alignof__(unsigned long long))
-		return kstrtoull(s, base, (unsigned long long *)res);
+	if (sizeof(unsigned long) == sizeof(u64) &&
+	    __alignof__(unsigned long) == __alignof__(u64))
+		return kstrtoull(s, base, (u64*)res);
 	else
 		return _kstrtoul(s, base, res);
 }
@@ -320,11 +320,11 @@ static inline int __must_check kstrtol(const char *s, unsigned int base, long *r
 {
 	/*
 	 * We want to shortcut function call, but
-	 * __builtin_types_compatible_p(long, long long) = 0.
+	 * __builtin_types_compatible_p(long, s64) = 0.
 	 */
-	if (sizeof(long) == sizeof(long long) &&
-	    __alignof__(long) == __alignof__(long long))
-		return kstrtoll(s, base, (long long *)res);
+	if (sizeof(long) == sizeof(s64) &&
+	    __alignof__(long) == __alignof__(s64))
+		return kstrtoll(s, base, (s64 *)res);
 	else
 		return _kstrtol(s, base, res);
 }
@@ -357,8 +357,8 @@ int __must_check kstrtos16(const char *s, unsigned int base, s16 *res);
 int __must_check kstrtou8(const char *s, unsigned int base, u8 *res);
 int __must_check kstrtos8(const char *s, unsigned int base, s8 *res);
 
-int __must_check kstrtoull_from_user(const char __user *s, size_t count, unsigned int base, unsigned long long *res);
-int __must_check kstrtoll_from_user(const char __user *s, size_t count, unsigned int base, long long *res);
+int __must_check kstrtoull_from_user(const char __user *s, size_t count, unsigned int base, u64 *res);
+int __must_check kstrtoll_from_user(const char __user *s, size_t count, unsigned int base, s64 *res);
 int __must_check kstrtoul_from_user(const char __user *s, size_t count, unsigned int base, unsigned long *res);
 int __must_check kstrtol_from_user(const char __user *s, size_t count, unsigned int base, long *res);
 int __must_check kstrtouint_from_user(const char __user *s, size_t count, unsigned int base, unsigned int *res);
@@ -400,7 +400,7 @@ static inline int __must_check kstrtos32_from_user(const char __user *s, size_t 
 #define simple_strtoll strtoll
 
 
-extern int num_to_str(char *buf, int size, unsigned long long num);
+extern int num_to_str(char *buf, int size, u64 num);
 
 /* lib/printf utilities */
 
@@ -428,7 +428,7 @@ int vsscanf(const char *, const char *, va_list);
 
 extern int get_option(char **str, int *pint);
 extern char *get_options(const char *str, int nints, int *ints);
-extern unsigned long long memparse(const char *ptr, char **retptr);
+extern u64 memparse(const char *ptr, char **retptr);
 extern bool parse_option_str(const char *str, const char *option);
 
 extern int core_kernel_text(unsigned long addr);
