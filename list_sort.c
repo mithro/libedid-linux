@@ -1,13 +1,14 @@
 
 #define pr_fmt(fmt) "list_sort_test: " fmt
 
-#include <linux/kernel.h>
-#include <linux/bug.h>
-#include <linux/compiler.h>
-#include <linux/export.h>
-#include <linux/string.h>
-#include <linux/list_sort.h>
-#include <linux/list.h>
+#include <string.h>
+
+#include "kernel.h"
+#include "bug.h"
+#include "compiler.h"
+#include "module.h"
+#include "list_sort.h"
+#include "list.h"
 
 #define MAX_LIST_LENGTH_BITS 20
 
