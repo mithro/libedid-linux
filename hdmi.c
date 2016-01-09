@@ -28,6 +28,7 @@
 #include "types.h"
 #include "module.h"
 #include "hdmi.h"
+#include "bug.h"
 
 #define hdmi_log(fmt, ...) printf(fmt, ##__VA_ARGS__)
 
