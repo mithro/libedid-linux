@@ -19,9 +19,9 @@
 set -x
 set -e
 
-#CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-#git checkout "linux-raw"
+git checkout "linux-raw"
 
 CODE="\
 	include/linux/hdmi.h \
@@ -77,4 +77,4 @@ done
 )
 git commit -m "Updating Linux imports."
 
-#git checkout $CURRENT_BRANCH
+git checkout $CURRENT_BRANCH
