@@ -7,11 +7,10 @@
  * more details.
  */
 
-#include <linux/types.h>
-#include <linux/ctype.h>
-#include <linux/kernel.h>
-#include <linux/export.h>
-#include <asm/unaligned.h>
+#include "types.h"
+#include "kernel.h"
+#include "module.h"
+#include "kprintf.h"
 
 const char hex_asc[] = "0123456789abcdef";
 EXPORT_SYMBOL(hex_asc);
@@ -207,7 +206,6 @@ overflow1:
 }
 EXPORT_SYMBOL(hex_dump_to_buffer);
 
-#ifdef CONFIG_PRINTK
 /**
  * print_hex_dump - print a text hex dump to syslog for a binary blob of data
  * @level: kernel log level (e.g. KERN_DEBUG)
@@ -273,7 +271,6 @@ void print_hex_dump(const char *level, const char *prefix_str, int prefix_type,
 }
 EXPORT_SYMBOL(print_hex_dump);
 
-#if !defined(CONFIG_DYNAMIC_DEBUG)
 /**
  * print_hex_dump_bytes - shorthand form of print_hex_dump() with default params
  * @prefix_str: string to prefix each line with;
@@ -293,5 +290,3 @@ void print_hex_dump_bytes(const char *prefix_str, int prefix_type,
 		       buf, len, true);
 }
 EXPORT_SYMBOL(print_hex_dump_bytes);
-#endif /* !defined(CONFIG_DYNAMIC_DEBUG) */
-#endif /* defined(CONFIG_PRINTK) */
