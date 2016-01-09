@@ -80,7 +80,9 @@
 #define __inline	__inline	notrace
 #endif
 
+#ifndef __always_inline
 #define __always_inline	inline __attribute__((always_inline))
+#endif
 #define  noinline	__attribute__((noinline))
 
 #define __deprecated	__attribute__((deprecated))
@@ -118,7 +120,9 @@
 #define __aligned(x)		__attribute__((aligned(x)))
 #define __printf(a, b)		__attribute__((format(printf, a, b)))
 #define __scanf(a, b)		__attribute__((format(scanf, a, b)))
+#ifndef __attribute_const__
 #define __attribute_const__	__attribute__((__const__))
+#endif
 #define __maybe_unused		__attribute__((unused))
 #define __always_unused		__attribute__((unused))
 
@@ -141,7 +145,9 @@
 #endif /* CONFIG_GCOV_KERNEL */
 
 #if GCC_VERSION >= 30400
+#ifndef __must_check
 #define __must_check		__attribute__((warn_unused_result))
+#endif
 #endif
 
 #if GCC_VERSION >= 40000
@@ -176,7 +182,9 @@
  * a special section, but I don't see any sense in this right now in
  * the kernel context
  */
+#ifndef __cold
 #define __cold			__attribute__((__cold__))
+#endif
 
 #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
 

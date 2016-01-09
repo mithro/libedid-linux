@@ -1,8 +1,6 @@
 #ifndef __LINUX_COMPILER_H
 #define __LINUX_COMPILER_H
 
-#ifndef __ASSEMBLY__
-
 #ifdef __CHECKER__
 # define __user		__attribute__((noderef, address_space(1)))
 # define __kernel	__attribute__((address_space(0)))
@@ -50,10 +48,8 @@ extern void __chk_io_ptr(const volatile void __iomem *);
 #define ___PASTE(a,b) a##b
 #define __PASTE(a,b) ___PASTE(a,b)
 
-#ifdef __KERNEL__
-
 #ifdef __GNUC__
-#include <linux/compiler-gcc.h>
+#include "compiler-gcc.h"
 #endif
 
 #if defined(CC_USING_HOTPATCH) && !defined(__CHECKER__)
@@ -196,7 +192,7 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
 # define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __LINE__)
 #endif
 
-#include <uapi/linux/types.h>
+#include "types.h"
 
 #define __READ_ONCE_SIZE						\
 ({									\
@@ -299,11 +295,6 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
 	__u.__val;					\
 })
 
-#endif /* __KERNEL__ */
-
-#endif /* __ASSEMBLY__ */
-
-#ifdef __KERNEL__
 /*
  * Allow us to mark functions as 'deprecated' and have gcc emit a nice
  * warning for each use, in hopes of speeding the functions removal.
@@ -378,8 +369,6 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
 #ifndef __always_inline
 #define __always_inline inline
 #endif
-
-#endif /* __KERNEL__ */
 
 /*
  * From the GCC manual:
