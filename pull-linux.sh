@@ -41,12 +41,18 @@ CODE="\
 	\
 	include/uapi/drm/drm_fourcc.h \
 	include/uapi/drm/drm_mode.h \
+	\
 	include/drm/drm_crtc.h \
-	include/drm/drm_displayid.h \
-	include/drm/drm_edid.h \
-	include/drm/drm_modes.h \
 	drivers/gpu/drm/drm_crtc.c \
+	\
+	include/drm/drm_edid.h \
 	drivers/gpu/drm/drm_edid.c \
+	\
+	include/drm/drm_modes.h \
+	drivers/gpu/drm/drm_modes.c \
+	\
+	include/drm/drm_displayid.h \
+	\
 	drivers/gpu/drm/drm_edid_load.c \
 	\
 	include/drm/drm_dp_mst_helper.h \
