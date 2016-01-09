@@ -27,21 +27,26 @@ git checkout "linux-raw"
 
 CODE="\
 	tools/include/linux/types.h \
-	include/drm/drm_crtc.h \
-	include/drm/drm_displayid.h \
-	include/drm/drm_dp_mst_helper.h \
-	include/drm/drm_edid.h \
-	include/drm/drm_modes.h \
 	include/linux/bug.h \
-	include/linux/hdmi.h \
 	include/linux/list.h \
+	include/linux/poison.h \
+	\
+	include/linux/hdmi.h \
+	drivers/video/hdmi.c \
+	\
 	include/uapi/drm/drm_fourcc.h \
 	include/uapi/drm/drm_mode.h \
+	include/drm/drm_crtc.h \
+	include/drm/drm_displayid.h \
+	include/drm/drm_edid.h \
+	include/drm/drm_modes.h \
 	drivers/gpu/drm/drm_crtc.c \
 	drivers/gpu/drm/drm_edid.c \
 	drivers/gpu/drm/drm_edid_load.c \
+	\
+	include/drm/drm_dp_mst_helper.h \
 	drivers/gpu/drm/drm_probe_helper.c \
-	drivers/video/hdmi.c \
+	\
 	sound/pci/hda/hda_eld.c \
 	sound/pci/hda/patch_hdmi.c \
 	"
