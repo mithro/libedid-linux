@@ -24,8 +24,7 @@
 #ifndef __LINUX_HDMI_H_
 #define __LINUX_HDMI_H_
 
-#include <linux/types.h>
-#include <linux/device.h>
+#include "types.h"
 
 enum hdmi_infoframe_type {
 	HDMI_INFOFRAME_TYPE_VENDOR = 0x81,
@@ -330,7 +329,7 @@ union hdmi_infoframe {
 ssize_t
 hdmi_infoframe_pack(union hdmi_infoframe *frame, void *buffer, size_t size);
 int hdmi_infoframe_unpack(union hdmi_infoframe *frame, void *buffer);
-void hdmi_infoframe_log(const char *level, struct device *dev,
+void hdmi_infoframe_log(const char *level,
 			union hdmi_infoframe *frame);
 
 #endif /* _DRM_HDMI_H */
