@@ -32,6 +32,7 @@ CODE="\
 	include/drm/drm_modes.h \
 	include/uapi/drm/drm_fourcc.h \
 	include/uapi/drm/drm_mode.h \
+	drivers/video/hdmi.c \
 	drivers/gpu/drm/drm_crtc.c \
 	drivers/gpu/drm/drm_edid.c \
 	drivers/gpu/drm/drm_edid_load.c \
