@@ -1,11 +1,8 @@
 #ifndef _LINUX_LIST_H
 #define _LINUX_LIST_H
 
-#include <linux/types.h>
-#include <linux/stddef.h>
-#include <linux/poison.h>
-#include <linux/const.h>
-#include <linux/kernel.h>
+#include "types.h"
+#include "poison.h"
 
 /*
  * Simple doubly linked list implementation.
