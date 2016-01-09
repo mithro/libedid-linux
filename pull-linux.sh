@@ -26,6 +26,7 @@ git stash
 git checkout "linux-raw"
 
 CODE="\
+	tools/include/linux/types.h \
 	include/linux/hdmi.h \
 	include/drm/drm_crtc.h \
 	include/drm/drm_dp_mst_helper.h \
