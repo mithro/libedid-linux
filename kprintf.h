@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #define printk(...) printf(__VA_ARGS__)
+#define printk_once(...) printf(__VA_ARGS__)
 #define no_printk(...)
 
 #define dev_warn(dev, ...) printf("WARN: " __VA_ARGS__)
