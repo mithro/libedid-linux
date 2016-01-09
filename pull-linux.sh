@@ -23,18 +23,25 @@ set -e
 
 #git checkout "linux-raw"
 
-CODE="	drivers/gpu/drm/drm_edid.c \
-	drivers/gpu/drm/drm_edid_load.c \
-	drivers/gpu/drm/drm_probe_helper.c \
+CODE="\
+	include/linux/hdmi.h \
 	include/drm/drm_crtc.h \
 	include/drm/drm_dp_mst_helper.h \
 	include/drm/drm_edid.h \
+	include/drm/drm_displayid.h \
 	include/drm/drm_modes.h \
 	include/uapi/drm/drm_fourcc.h \
 	include/uapi/drm/drm_mode.h \
+	drivers/gpu/drm/drm_crtc.c \
+	drivers/gpu/drm/drm_edid.c \
+	drivers/gpu/drm/drm_edid_load.c \
+	drivers/gpu/drm/drm_probe_helper.c \
+	sound/pci/hda/hda_eld.c \
+	sound/pci/hda/patch_hdmi.c \
 	"
 
-DOCS=" 	Documentation/EDID/800x600.S \
+DOCS="\
+ 	Documentation/EDID/800x600.S \
 	Documentation/EDID/1024x768.S \
 	Documentation/EDID/1280x1024.S \
 	Documentation/EDID/1680x1050.S \
