@@ -29,6 +29,8 @@ CODE="\
 	tools/include/linux/types.h \
 	include/linux/bug.h \
 	include/linux/compiler.h \
+	include/linux/compiler-gcc.h \
+	include/linux/compiler-clang.h \
 	include/linux/kernel.h \
 	include/linux/list.h \
 	include/linux/poison.h \
