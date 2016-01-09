@@ -56,13 +56,13 @@ struct displayid_hdr {
 	u8 bytes;
 	u8 prod_id;
 	u8 ext_count;
-} __packed;
+} __attribute__((packed));
 
 struct displayid_block {
 	u8 tag;
 	u8 rev;
 	u8 num_bytes;
-} __packed;
+} __attribute__((packed));
 
 struct displayid_tiled_block {
 	struct displayid_block base;
@@ -71,6 +71,6 @@ struct displayid_tiled_block {
 	u8 tile_size[4];
 	u8 tile_pixel_bezel[5];
 	u8 topology_id[8];
-} __packed;
+} __attribute__((packed));
 
 #endif
