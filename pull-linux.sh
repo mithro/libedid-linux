@@ -33,8 +33,10 @@ CODE="\
 	include/linux/compiler-clang.h \
 	include/linux/kernel.h \
 	include/linux/list.h \
+	include/linux/list_sort.h \
 	include/linux/poison.h \
 	lib/hexdump.c \
+	lib/list_sort.c \
 	\
 	include/linux/hdmi.h \
 	drivers/video/hdmi.c \

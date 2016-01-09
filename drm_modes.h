@@ -27,6 +27,8 @@
 #ifndef __DRM_MODES_H__
 #define __DRM_MODES_H__
 
+#include "drm_mode.h"
+
 /*
  * Note on terminology:  here, for brevity and convenience, we refer to connector
  * control chips as 'CRTCs'.  They can control any type of connector, VGA, LVDS,
@@ -180,8 +182,8 @@ static inline bool drm_mode_is_stereo(const struct drm_display_mode *mode)
 struct drm_connector;
 struct drm_cmdline_mode;
 
-struct drm_display_mode *drm_mode_create(struct drm_device *dev);
-void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
+struct drm_display_mode *drm_mode_create();
+void drm_mode_destroy(struct drm_display_mode *mode);
 void drm_mode_convert_to_umode(struct drm_mode_modeinfo *out,
                                const struct drm_display_mode *in);
 int drm_mode_convert_umode(struct drm_display_mode *out,
@@ -189,27 +191,30 @@ int drm_mode_convert_umode(struct drm_display_mode *out,
 void drm_mode_probed_add(struct drm_connector *connector, struct drm_display_mode *mode);
 void drm_mode_debug_printmodeline(const struct drm_display_mode *mode);
 
-struct drm_display_mode *drm_cvt_mode(struct drm_device *dev,
+
+struct drm_display_mode *drm_cvt_mode(
 				      int hdisplay, int vdisplay, int vrefresh,
 				      bool reduced, bool interlaced,
 				      bool margins);
-struct drm_display_mode *drm_gtf_mode(struct drm_device *dev,
+struct drm_display_mode *drm_gtf_mode(
 				      int hdisplay, int vdisplay, int vrefresh,
 				      bool interlaced, int margins);
-struct drm_display_mode *drm_gtf_mode_complex(struct drm_device *dev,
+struct drm_display_mode *drm_gtf_mode_complex(
 					      int hdisplay, int vdisplay,
 					      int vrefresh, bool interlaced,
 					      int margins,
 					      int GTF_M, int GTF_2C,
 					      int GTF_K, int GTF_2J);
-void drm_display_mode_from_videomode(const struct videomode *vm,
-				     struct drm_display_mode *dmode);
-void drm_display_mode_to_videomode(const struct drm_display_mode *dmode,
-				   struct videomode *vm);
+
+//void drm_display_mode_from_videomode(const struct videomode *vm,
+//				     struct drm_display_mode *dmode);
+//void drm_display_mode_to_videomode(const struct drm_display_mode *dmode,
+//				   struct videomode *vm);
+/*
 int of_get_drm_display_mode(struct device_node *np,
 			    struct drm_display_mode *dmode,
 			    int index);
-
+*/
 void drm_mode_set_name(struct drm_display_mode *mode);
 int drm_mode_hsync(const struct drm_display_mode *mode);
 int drm_mode_vrefresh(const struct drm_display_mode *mode);
@@ -218,8 +223,9 @@ void drm_mode_set_crtcinfo(struct drm_display_mode *p,
 			   int adjust_flags);
 void drm_mode_copy(struct drm_display_mode *dst,
 		   const struct drm_display_mode *src);
-struct drm_display_mode *drm_mode_duplicate(struct drm_device *dev,
+struct drm_display_mode *drm_mode_duplicate(
 					    const struct drm_display_mode *mode);
+
 bool drm_mode_equal(const struct drm_display_mode *mode1,
 		    const struct drm_display_mode *mode2);
 bool drm_mode_equal_no_clocks_no_stereo(const struct drm_display_mode *mode1,
@@ -229,8 +235,8 @@ bool drm_mode_equal_no_clocks_no_stereo(const struct drm_display_mode *mode1,
 enum drm_mode_status drm_mode_validate_basic(const struct drm_display_mode *mode);
 enum drm_mode_status drm_mode_validate_size(const struct drm_display_mode *mode,
 					    int maxX, int maxY);
-void drm_mode_prune_invalid(struct drm_device *dev,
-			    struct list_head *mode_list, bool verbose);
+//void drm_mode_prune_invalid(struct drm_device *dev,
+//			    struct list_head *mode_list, bool verbose);
 void drm_mode_sort(struct list_head *mode_list);
 void drm_mode_connector_list_update(struct drm_connector *connector, bool merge_type_bits);
 
@@ -239,8 +245,8 @@ bool
 drm_mode_parse_command_line_for_connector(const char *mode_option,
 					  struct drm_connector *connector,
 					  struct drm_cmdline_mode *mode);
-struct drm_display_mode *
-drm_mode_create_from_cmdline_mode(struct drm_device *dev,
-				  struct drm_cmdline_mode *cmd);
+//struct drm_display_mode *
+//drm_mode_create_from_cmdline_mode(struct drm_device *dev,
+//				  struct drm_cmdline_mode *cmd);
 
 #endif /* __DRM_MODES_H__ */

@@ -30,16 +30,22 @@
  * authorization from the copyright holder(s) and author(s).
  */
 
-#include <linux/list.h>
-#include <linux/list_sort.h>
-#include <linux/export.h>
-#include <drm/drmP.h>
-#include <drm/drm_crtc.h>
-#include <video/of_videomode.h>
-#include <video/videomode.h>
-#include <drm/drm_modes.h>
+#include <errno.h>
 
-#include "drm_crtc_internal.h"
+#include "kmem.h"
+#include "kprintf.h"
+#include "bug.h"
+
+#include "list.h"
+//#include <linux/list_sort.h>
+#include "module.h"
+//#include <drm/drmP.h>
+#include "drm_crtc.h"
+//#include <video/of_videomode.h>
+//#include <video/videomode.h>
+#include "drm_modes.h"
+
+//#include "drm_crtc_internal.h"
 
 /**
  * drm_mode_debug_printmodeline - print a mode to dmesg
@@ -61,7 +67,6 @@ EXPORT_SYMBOL(drm_mode_debug_printmodeline);
 
 /**
  * drm_mode_create - create a new display mode
- * @dev: DRM device
  *
  * Create a new, cleared drm_display_mode with kzalloc, allocate an ID for it
  * and return it.
@@ -69,7 +74,7 @@ EXPORT_SYMBOL(drm_mode_debug_printmodeline);
  * Returns:
  * Pointer to new mode on success, NULL on error.
  */
-struct drm_display_mode *drm_mode_create(struct drm_device *dev)
+struct drm_display_mode *drm_mode_create()
 {
 	struct drm_display_mode *nmode;
 
@@ -77,7 +82,7 @@ struct drm_display_mode *drm_mode_create(struct drm_device *dev)
 	if (!nmode)
 		return NULL;
 
-	if (drm_mode_object_get(dev, &nmode->base, DRM_MODE_OBJECT_MODE)) {
+	if (drm_mode_object_get(&nmode->base, DRM_MODE_OBJECT_MODE)) {
 		kfree(nmode);
 		return NULL;
 	}
@@ -88,17 +93,16 @@ EXPORT_SYMBOL(drm_mode_create);
 
 /**
  * drm_mode_destroy - remove a mode
- * @dev: DRM device
  * @mode: mode to remove
  *
  * Release @mode's unique ID, then free it @mode structure itself using kfree.
  */
-void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode)
+void drm_mode_destroy(struct drm_display_mode *mode)
 {
 	if (!mode)
 		return;
 
-	drm_mode_object_put(dev, &mode->base);
+	drm_mode_object_put(&mode->base);
 
 	kfree(mode);
 }
@@ -116,15 +120,12 @@ EXPORT_SYMBOL(drm_mode_destroy);
 void drm_mode_probed_add(struct drm_connector *connector,
 			 struct drm_display_mode *mode)
 {
-	WARN_ON(!mutex_is_locked(&connector->dev->mode_config.mutex));
-
 	list_add_tail(&mode->head, &connector->probed_modes);
 }
 EXPORT_SYMBOL(drm_mode_probed_add);
 
 /**
  * drm_cvt_mode -create a modeline based on the CVT algorithm
- * @dev: drm device
  * @hdisplay: hdisplay size
  * @vdisplay: vdisplay size
  * @vrefresh: vrefresh rate
@@ -146,7 +147,7 @@ EXPORT_SYMBOL(drm_mode_probed_add);
  * The display mode object is allocated with drm_mode_create(). Returns NULL
  * when no mode could be allocated.
  */
-struct drm_display_mode *drm_cvt_mode(struct drm_device *dev, int hdisplay,
+struct drm_display_mode *drm_cvt_mode(int hdisplay,
 				      int vdisplay, int vrefresh,
 				      bool reduced, bool interlaced, bool margins)
 {
@@ -169,7 +170,7 @@ struct drm_display_mode *drm_cvt_mode(struct drm_device *dev, int hdisplay,
 	/* allocate the drm_display_mode structure. If failure, we will
 	 * return directly
 	 */
-	drm_mode = drm_mode_create(dev);
+	drm_mode = drm_mode_create();
 	if (!drm_mode)
 		return NULL;
 
@@ -345,7 +346,6 @@ EXPORT_SYMBOL(drm_cvt_mode);
 
 /**
  * drm_gtf_mode_complex - create the modeline based on the full GTF algorithm
- * @dev: drm device
  * @hdisplay: hdisplay size
  * @vdisplay: vdisplay size
  * @vrefresh: vrefresh rate.
@@ -365,7 +365,7 @@ EXPORT_SYMBOL(drm_cvt_mode);
  * when no mode could be allocated.
  */
 struct drm_display_mode *
-drm_gtf_mode_complex(struct drm_device *dev, int hdisplay, int vdisplay,
+drm_gtf_mode_complex(int hdisplay, int vdisplay,
 		     int vrefresh, bool interlaced, int margins,
 		     int GTF_M, int GTF_2C, int GTF_K, int GTF_2J)
 {	/* 1) top/bottom margin size (% of height) - default: 1.8, */
@@ -397,7 +397,7 @@ drm_gtf_mode_complex(struct drm_device *dev, int hdisplay, int vdisplay,
 	int hsync, hfront_porch, vodd_front_porch_lines;
 	unsigned int tmp1, tmp2;
 
-	drm_mode = drm_mode_create(dev);
+	drm_mode = drm_mode_create();
 	if (!drm_mode)
 		return NULL;
 
@@ -533,7 +533,6 @@ EXPORT_SYMBOL(drm_gtf_mode_complex);
 
 /**
  * drm_gtf_mode - create the modeline based on the GTF algorithm
- * @dev: drm device
  * @hdisplay: hdisplay size
  * @vdisplay: vdisplay size
  * @vrefresh: vrefresh rate.
@@ -564,10 +563,10 @@ EXPORT_SYMBOL(drm_gtf_mode_complex);
  * when no mode could be allocated.
  */
 struct drm_display_mode *
-drm_gtf_mode(struct drm_device *dev, int hdisplay, int vdisplay, int vrefresh,
+drm_gtf_mode(int hdisplay, int vdisplay, int vrefresh,
 	     bool interlaced, int margins)
 {
-	return drm_gtf_mode_complex(dev, hdisplay, vdisplay, vrefresh,
+	return drm_gtf_mode_complex(hdisplay, vdisplay, vrefresh,
 				    interlaced, margins,
 				    600, 40 * 2, 128, 20 * 2);
 }
@@ -867,7 +866,6 @@ EXPORT_SYMBOL(drm_mode_copy);
 
 /**
  * drm_mode_duplicate - allocate and duplicate an existing mode
- * @dev: drm_device to allocate the duplicated mode for
  * @mode: mode to duplicate
  *
  * Just allocate a new mode, copy the existing mode into it, and return
@@ -876,12 +874,12 @@ EXPORT_SYMBOL(drm_mode_copy);
  * Returns:
  * Pointer to duplicated mode on success, NULL on error.
  */
-struct drm_display_mode *drm_mode_duplicate(struct drm_device *dev,
+struct drm_display_mode *drm_mode_duplicate(
 					    const struct drm_display_mode *mode)
 {
 	struct drm_display_mode *nmode;
 
-	nmode = drm_mode_create(dev);
+	nmode = drm_mode_create();
 	if (!nmode)
 		return NULL;
 
@@ -1075,7 +1073,6 @@ static const char *drm_get_mode_status_name(enum drm_mode_status status)
 
 /**
  * drm_mode_prune_invalid - remove invalid modes from mode list
- * @dev: DRM device
  * @mode_list: list of modes to check
  * @verbose: be verbose about it
  *
@@ -1084,7 +1081,7 @@ static const char *drm_get_mode_status_name(enum drm_mode_status status)
  * removed from the list, and if @verbose the status code and mode name is also
  * printed to dmesg.
  */
-void drm_mode_prune_invalid(struct drm_device *dev,
+void drm_mode_prune_invalid(
 			    struct list_head *mode_list, bool verbose)
 {
 	struct drm_display_mode *mode, *t;
@@ -1098,7 +1095,7 @@ void drm_mode_prune_invalid(struct drm_device *dev,
 					      mode->name,
 					      drm_get_mode_status_name(mode->status));
 			}
-			drm_mode_destroy(dev, mode);
+			drm_mode_destroy(mode);
 		}
 	}
 }
@@ -1170,8 +1167,6 @@ void drm_mode_connector_list_update(struct drm_connector *connector,
 	struct drm_display_mode *pmode, *pt;
 	int found_it;
 
-	WARN_ON(!mutex_is_locked(&connector->dev->mode_config.mutex));
-
 	list_for_each_entry_safe(pmode, pt, &connector->probed_modes,
 				 head) {
 		found_it = 0;
@@ -1187,7 +1182,7 @@ void drm_mode_connector_list_update(struct drm_connector *connector,
 				else
 					mode->type = pmode->type;
 				list_del(&pmode->head);
-				drm_mode_destroy(connector->dev, pmode);
+				drm_mode_destroy(pmode);
 				break;
 			}
 		}
@@ -1373,26 +1368,25 @@ EXPORT_SYMBOL(drm_mode_parse_command_line_for_connector);
 
 /**
  * drm_mode_create_from_cmdline_mode - convert a command line modeline into a DRM display mode
- * @dev: DRM device to create the new mode for
  * @cmd: input command line modeline
  *
  * Returns:
  * Pointer to converted mode on success, NULL on error.
  */
 struct drm_display_mode *
-drm_mode_create_from_cmdline_mode(struct drm_device *dev,
+drm_mode_create_from_cmdline_mode(
 				  struct drm_cmdline_mode *cmd)
 {
 	struct drm_display_mode *mode;
 
 	if (cmd->cvt)
-		mode = drm_cvt_mode(dev,
+		mode = drm_cvt_mode(
 				    cmd->xres, cmd->yres,
 				    cmd->refresh_specified ? cmd->refresh : 60,
 				    cmd->rb, cmd->interlace,
 				    cmd->margins);
 	else
-		mode = drm_gtf_mode(dev,
+		mode = drm_gtf_mode(
 				    cmd->xres, cmd->yres,
 				    cmd->refresh_specified ? cmd->refresh : 60,
 				    cmd->interlace,
