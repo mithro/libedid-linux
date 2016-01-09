@@ -8,7 +8,10 @@
 #define __SANE_USERSPACE_TYPES__	/* For PPC64, to get LL64 types */
 #include <asm/types.h>
 
+#include <endian.h>
 #include <sys/types.h>
+
+#define BIT(nr)                 (1UL << (nr))
 
 struct page;
 struct kmem_cache;
@@ -82,15 +85,19 @@ struct hlist_node {
 	struct hlist_node *next, **pprev;
 };
 
-/**
- * container_of - cast a member of a structure out to the containing structure
- * @ptr:        the pointer to the member.
- * @type:       the type of the container struct this is embedded in.
- * @member:     the name of the member within the struct.
- *
- */
-#define container_of(ptr, type, member) ({                      \
-        const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
-        (type *)( (char *)__mptr - offsetof(type,member) );})
+
+#define get_unaligned(x) (*(x))
+
+static inline __attribute__((const))
+bool is_power_of_2(unsigned long n)
+{
+        return (n != 0 && ((n & (n - 1)) == 0));
+}
+
+#define cpu_to_le16 htole16
+#define le16_to_cpu le16toh
+
+#define PICOS2KHZ(a) (1000000000UL/(a))
+#define KHZ2PICOS(a) (1000000000UL/(a))
 
 #endif /* _TOOLS_LINUX_TYPES_H_ */
