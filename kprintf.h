@@ -7,7 +7,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#define printk(...) printf(...)
+#define printk(...) printf(__VA_ARGS__)
 #define dev_warn(dev, ...) printf("WARN: " __VA_ARGS__)
 
 #define KERN_ERR "ERR: "
