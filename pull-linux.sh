@@ -34,6 +34,7 @@ CODE="\
 	include/linux/kernel.h \
 	include/linux/list.h \
 	include/linux/poison.h \
+	lib/hexdump.c \
 	\
 	include/linux/hdmi.h \
 	drivers/video/hdmi.c \
