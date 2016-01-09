@@ -21,6 +21,8 @@ set -e
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
+git stash
+
 git checkout "linux-raw"
 
 CODE="\
@@ -79,3 +81,5 @@ done
 git commit -m "Updating Linux imports."
 
 git checkout $CURRENT_BRANCH
+
+git stash pop
